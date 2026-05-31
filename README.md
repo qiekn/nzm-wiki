@@ -8,6 +8,11 @@
 
 技术栈: React, Next.js, TypeScript, Tailwind CSS, [MDX](https://mdxjs.com/)
 
+其他玩家的 Fork
+
+- https://lostlightll.github.io/nzm-wiki/
+
+
 ## 特性
 
 ### 搜索面板
