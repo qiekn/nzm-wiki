@@ -2,7 +2,7 @@
 title: 锻星力量
 use_type: 近战武器
 weapon_type: null
-element: null
+element: 电弧
 rarity: 史诗
 tags: null
 scope: null
@@ -15,13 +15,25 @@ magazine: null
 total_ammo: null
 accuracy: null
 stability: null
-reload_time: null
+changeClip:
+  timeBase: 0.9
+  endToFireTime: 0
 range: null
 explosion_range: null
 ignore_shield: null
 element_add_rate: null
 skill_cooldown: null
 pellets: null
+prototype_id: '20013000057'
 ---
 
-# 新建文档
+<WeaponSkill>
+  <PassiveSkill
+    name="锻星之力"
+    icon="/icons/weapons/skills/T_Weapon_Skill_20013000057.png"
+  >
+    携带此武器时，角色造成的电属性伤害增加<Yellow>5%</Yellow>。
+  </PassiveSkill>
+</WeaponSkill>
+
+<Callout>轻击伤害 **432** / **451**（元素异常 **28.8%** / **30.1%**），重击伤害 **1512**（元素异常 **100.8%**）</Callout>

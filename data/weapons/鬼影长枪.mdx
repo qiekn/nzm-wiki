@@ -15,13 +15,25 @@ magazine: null
 total_ammo: null
 accuracy: null
 stability: null
-reload_time: null
+changeClip:
+  timeBase: 0.9
+  endToFireTime: 0
 range: null
 explosion_range: null
 ignore_shield: null
 element_add_rate: null
 skill_cooldown: null
 pellets: null
+prototype_id: '20013000053'
 ---
 
-# 新建文档
+<WeaponSkill>
+  <PassiveSkill
+    name="鬼术枪击"
+    icon="/icons/weapons/skills/T_Weapon_Skill_20013000053.png"
+  >
+    所有物理伤害提升<Yellow>5%</Yellow>，换弹速度提升<Yellow>8%</Yellow>。
+  </PassiveSkill>
+</WeaponSkill>
+
+<Callout>轻击伤害 **652** / **1080**，重击伤害 **2093**</Callout>

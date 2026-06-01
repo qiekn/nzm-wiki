@@ -2,7 +2,7 @@
 title: 樱之殇
 use_type: 近战武器
 weapon_type: null
-element: null
+element: 电弧
 rarity: 传说
 tags: null
 scope: null
@@ -15,13 +15,25 @@ magazine: null
 total_ammo: null
 accuracy: null
 stability: null
-reload_time: null
+changeClip:
+  timeBase: 0.9
+  endToFireTime: 0
 range: null
 explosion_range: null
 ignore_shield: null
 element_add_rate: null
 skill_cooldown: null
 pellets: null
+prototype_id: '20013000047'
 ---
 
-# 新建文档
+<WeaponSkill>
+  <PassiveSkill
+    name="樱雷回响"
+    icon="/icons/weapons/skills/T_Weapon_Skill_20013000047.png"
+  >
+    所有电属性伤害提升<Yellow>5%</Yellow>，近距离武器伤害提升<Yellow>5%</Yellow>。
+  </PassiveSkill>
+</WeaponSkill>
+
+<Callout>轻击伤害 **1350** / **1575**（元素异常 **72%** / **84%**），重击伤害 **2025**（元素异常 **108%**）</Callout>
