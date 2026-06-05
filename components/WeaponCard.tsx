@@ -33,6 +33,15 @@ function formatDamage(base: number | undefined | null, pellets?: number): string
   return damage;
 }
 
+function formatFireRate(fireInterval?: number | string | null): string {
+  const interval = Number(fireInterval);
+  if (!Number.isNaN(interval) && interval > 0) {
+    return formatSingleDecimal(60 / interval);
+  }
+
+  return "-";
+}
+
 function WeaponImage({ name, size = "normal" }: { name: string; size?: "small" | "normal" }) {
   const [hasError, setHasError] = useState(false);
 
@@ -145,7 +154,7 @@ function DetailedCard({ weapon }: { weapon: Weapon }) {
           </div>
           <div className="flex justify-between">
             <span className="text-zinc-500">射速</span>
-            <span className="text-white">{formatValue(weapon.file_rate)}</span>
+            <span className="text-white">{formatFireRate(weapon.fire_interval)}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-zinc-500">弹夹</span>
@@ -280,7 +289,7 @@ export function WeaponDetailCard({ weapon }: { weapon: Weapon }) {
         <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3">
           <div className="flex justify-between">
             <span className="text-zinc-500">射速</span>
-            <span className="text-white">{formatValue(weapon.file_rate)}</span>
+            <span className="text-white">{formatFireRate(weapon.fire_interval)}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-zinc-500">弹夹</span>

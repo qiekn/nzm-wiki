@@ -221,7 +221,7 @@ function generateWeaponStats() {
     rarity: string | null;
     damage_base: number | null;
     weekness_multiplier: number | null;
-    file_rate: number | null;
+    fire_interval: number | null;
     magazine: number | null;
     reload_time: number | null;
     enable_critical: boolean | null;
@@ -254,7 +254,7 @@ function generateWeaponStats() {
       rarity: data.rarity || null,
       damage_base: data.damage?.base ?? null,
       weekness_multiplier: typeof data.weekness_multiplier === "number" ? data.weekness_multiplier : null,
-      file_rate: typeof data.file_rate === "number" ? data.file_rate : null,
+      fire_interval: typeof data.fire_interval === "number" ? data.fire_interval : null,
       magazine: typeof data.magazine === "number" ? data.magazine : null,
       reload_time: typeof data.reload_time === "number" ? data.reload_time : null,
       enable_critical: data.enable_critical ?? null,

@@ -17,7 +17,7 @@ export const FIELD_ORDER = [
   "enable_critical",
   "weekness_multiplier",
   // 基础属性
-  "file_rate",
+  "fire_interval",
   "magazine",
   "total_ammo",
   "accuracy",
@@ -53,7 +53,7 @@ export const FIELD_TYPES: Record<string, string> = {
 
   // 纯数字输入
   weekness_multiplier: "number",
-  file_rate: "number",
+  fire_interval: "number",
   magazine: "number",
   total_ammo: "number",
   accuracy: "number",

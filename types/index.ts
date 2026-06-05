@@ -60,7 +60,7 @@ export interface Weapon {
   toughness_type: ToughnessType;
   enable_critical: boolean;
   weekness_multiplier: number;
-  file_rate?: number | string;
+  fire_interval?: number | string | null;
   magazine?: number | string;
   total_ammo?: number | string;
   accuracy?: number | string;

@@ -12,7 +12,6 @@ import { getAssetPath } from "@/lib/path";
 import { RARITY_OPTIONS } from "@/constants/common";
 import { STAT_SPRITES } from "@/constants/sprites";
 import { SpriteIcon } from "@/components/SpriteIcon";
-import type { Rarity } from "@/types";
 
 /**
  * 解析乘区表达式
@@ -65,7 +64,7 @@ interface WeaponStat {
   rarity: string | null;
   damage_base: number | null;
   weekness_multiplier: number | null;
-  file_rate: number | null;
+  fire_interval: number | null;
   magazine: number | null;
   reload_time: number | null;
   enable_critical: boolean | null;
@@ -130,7 +129,9 @@ export function DamageCalculator() {
   const applyWeapon = (w: WeaponStat) => {
     if (w.damage_base !== null) setBaseDmg(Math.round(w.damage_base * 500));
     if (w.weekness_multiplier !== null) setWeakpointMul(w.weekness_multiplier);
-    if (w.file_rate !== null) setFireRate(w.file_rate);
+    if (w.fire_interval !== null && w.fire_interval > 0) {
+      setFireRate(60 / w.fire_interval);
+    }
     if (w.magazine !== null) setMagSize(w.magazine);
     if (w.reload_time !== null) setReloadTime(w.reload_time);
   };
@@ -655,11 +656,8 @@ function WeaponSelect({
     if (!query) return weapons;
     return weapons.filter((w) => matchWeapon(w, query));
   }, [weapons, query]);
-
-  // 重置高亮
-  useEffect(() => {
-    setHighlightIndex(0);
-  }, [filtered]);
+  const safeHighlightIndex =
+    filtered.length > 0 ? Math.min(highlightIndex, filtered.length - 1) : 0;
 
   // 点击外部关闭
   useEffect(() => {
@@ -678,11 +676,11 @@ function WeaponSelect({
   // 滚动高亮项到可视区域
   useEffect(() => {
     if (!open || !listRef.current) return;
-    const item = listRef.current.children[highlightIndex] as
+    const item = listRef.current.children[safeHighlightIndex] as
       | HTMLElement
       | undefined;
     item?.scrollIntoView({ block: "nearest" });
-  }, [highlightIndex, open]);
+  }, [safeHighlightIndex, open]);
 
   const handleSelect = (w: WeaponStat) => {
     setSelected(w.title);
@@ -702,13 +700,13 @@ function WeaponSelect({
     }
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setHighlightIndex((i) => Math.min(i + 1, filtered.length - 1));
+      setHighlightIndex((i) => Math.min(i + 1, Math.max(filtered.length - 1, 0)));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setHighlightIndex((i) => Math.max(i - 1, 0));
-    } else if (e.key === "Enter" && filtered[highlightIndex]) {
+    } else if (e.key === "Enter" && filtered[safeHighlightIndex]) {
       e.preventDefault();
-      handleSelect(filtered[highlightIndex]);
+      handleSelect(filtered[safeHighlightIndex]);
     } else if (e.key === "Escape") {
       setOpen(false);
     }
@@ -725,6 +723,7 @@ function WeaponSelect({
         value={query}
         onChange={(e) => {
           setQuery(e.target.value);
+          setHighlightIndex(0);
           setOpen(true);
         }}
         onFocus={() => setOpen(true)}
@@ -744,7 +743,7 @@ function WeaponSelect({
                 key={w.title}
                 type="button"
                 className={`flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm transition-colors ${
-                  i === highlightIndex ? "bg-zinc-700" : "hover:bg-zinc-700/50"
+                  i === safeHighlightIndex ? "bg-zinc-700" : "hover:bg-zinc-700/50"
                 }`}
                 onMouseEnter={() => setHighlightIndex(i)}
                 onMouseDown={(e) => {
