@@ -224,6 +224,9 @@ function generateWeaponStats() {
     fire_interval: number | null;
     magazine: number | null;
     reload_time: number | null;
+    attenuation_begin: number | null;
+    attenuation_end: number | null;
+    attenuation_scale: number | null;
     enable_critical: boolean | null;
     pinyin: string[];
   }
@@ -257,6 +260,9 @@ function generateWeaponStats() {
       fire_interval: typeof data.fire_interval === "number" ? data.fire_interval : null,
       magazine: typeof data.magazine === "number" ? data.magazine : null,
       reload_time: typeof data.reload_time === "number" ? data.reload_time : null,
+      attenuation_begin: typeof data.attenuation_begin === "number" ? data.attenuation_begin : null,
+      attenuation_end: typeof data.attenuation_end === "number" ? data.attenuation_end : null,
+      attenuation_scale: typeof data.attenuation_scale === "number" ? data.attenuation_scale : null,
       enable_critical: data.enable_critical ?? null,
       pinyin: [...pinyinSet],
     });

@@ -24,7 +24,10 @@ function formatSingleDecimal(value: number): string {
   return rounded.toFixed(1);
 }
 
-function formatDamage(base: number | undefined | null, pellets?: number): string {
+function formatDamage(
+  base: number | undefined | null,
+  pellets?: number,
+): string {
   if (base === null || base === undefined) return "-";
   const damage = formatSingleDecimal(base * 500);
   if (pellets && pellets > 1) {
@@ -42,7 +45,41 @@ function formatFireRate(fireInterval?: number | string | null): string {
   return "-";
 }
 
-function WeaponImage({ name, size = "normal" }: { name: string; size?: "small" | "normal" }) {
+function formatMeter(value: number | string | null | undefined): string {
+  if (value === null || value === undefined || value === "") return "-";
+  const numberValue = Number(value);
+  if (!Number.isFinite(numberValue)) return "-";
+  return `${formatSingleDecimal(numberValue)}m`;
+}
+
+function formatAttenuationSpeed(
+  begin: number | string | null | undefined,
+  end: number | string | null | undefined,
+  scale: number | string | null | undefined,
+): string {
+  const beginValue = Number(begin);
+  const endValue = Number(end);
+  const scaleValue = Number(scale);
+  if (
+    !Number.isFinite(beginValue) ||
+    !Number.isFinite(endValue) ||
+    !Number.isFinite(scaleValue) ||
+    endValue <= beginValue
+  ) {
+    return "-";
+  }
+
+  const percentPerMeter = ((1 - scaleValue) / (endValue - beginValue)) * 100;
+  return `${formatSingleDecimal(percentPerMeter)}%`;
+}
+
+function WeaponImage({
+  name,
+  size = "normal",
+}: {
+  name: string;
+  size?: "small" | "normal";
+}) {
   const [hasError, setHasError] = useState(false);
 
   if (hasError) {
@@ -88,7 +125,9 @@ function SimpleCard({ weapon }: { weapon: Weapon }) {
             />
           </div>
         )}
-        <h3 className="mb-2 text-base font-semibold text-white">{weapon.title}</h3>
+        <h3 className="mb-2 text-base font-semibold text-white">
+          {weapon.title}
+        </h3>
         <WeaponImage name={weapon.title} size="small" />
       </div>
     </Link>
@@ -105,7 +144,8 @@ function DetailedCard({ weapon }: { weapon: Weapon }) {
   const tags = Array.isArray(weapon.tags) ? weapon.tags : [];
 
   const formatValue = (val: number | string | null | undefined) => {
-    if (val === null || val === undefined || val === "" || val === -1) return "-";
+    if (val === null || val === undefined || val === "" || val === -1)
+      return "-";
     return val;
   };
 
@@ -130,10 +170,7 @@ function DetailedCard({ weapon }: { weapon: Weapon }) {
           {weapon.use_type && <span>{weapon.use_type}</span>}
           {weapon.weapon_type && <span>· {weapon.weapon_type}</span>}
           {weapon.scope && <span>· {weapon.scope}</span>}
-          {tags.length > 0 &&
-            tags.map((tag) => (
-              <span key={tag}>· {tag}</span>
-            ))}
+          {tags.length > 0 && tags.map((tag) => <span key={tag}>· {tag}</span>)}
         </div>
 
         <div className="flex justify-center">
@@ -143,18 +180,22 @@ function DetailedCard({ weapon }: { weapon: Weapon }) {
             width={320}
             height={160}
             className="object-contain"
-            style={{ width: 320, height: 'auto' }}
+            style={{ width: 320, height: "auto" }}
           />
         </div>
 
         <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2 text-base">
           <div className="flex justify-between">
             <span className="text-zinc-500">单发伤害</span>
-            <span className="text-white">{formatDamage(weapon.damage?.base, weapon.pellets)}</span>
+            <span className="text-white">
+              {formatDamage(weapon.damage?.base, weapon.pellets)}
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-zinc-500">射速</span>
-            <span className="text-white">{formatFireRate(weapon.fire_interval)}</span>
+            <span className="text-white">
+              {formatFireRate(weapon.fire_interval)}
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-zinc-500">弹夹</span>
@@ -170,15 +211,21 @@ function DetailedCard({ weapon }: { weapon: Weapon }) {
           </div>
           <div className="flex justify-between">
             <span className="text-zinc-500">破韧伤害</span>
-            <span className="text-white">{formatValue(weapon.damage?.toughness)}</span>
+            <span className="text-white">
+              {formatValue(weapon.damage?.toughness)}
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-zinc-500">换弹时间</span>
-            <span className="text-white">{formatValue(weapon.reload_time)}</span>
+            <span className="text-white">
+              {formatValue(weapon.reload_time)}
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-zinc-500">技能冷却</span>
-            <span className="text-white">{formatValue(weapon.skill_cooldown)}</span>
+            <span className="text-white">
+              {formatValue(weapon.skill_cooldown)}
+            </span>
           </div>
         </div>
       </div>
@@ -189,7 +236,13 @@ function DetailedCard({ weapon }: { weapon: Weapon }) {
 /**
  * 列表页武器卡片
  */
-export function WeaponCard({ weapon, showDetails = false }: { weapon: Weapon; showDetails?: boolean }) {
+export function WeaponCard({
+  weapon,
+  showDetails = false,
+}: {
+  weapon: Weapon;
+  showDetails?: boolean;
+}) {
   if (showDetails) {
     return <DetailedCard weapon={weapon} />;
   }
@@ -206,12 +259,15 @@ export function WeaponDetailCard({ weapon }: { weapon: Weapon }) {
   const tags = Array.isArray(weapon.tags) ? weapon.tags : [];
 
   const formatValue = (val: number | string | null | undefined) => {
-    if (val === null || val === undefined || val === "" || val === -1) return "-";
+    if (val === null || val === undefined || val === "" || val === -1)
+      return "-";
     return val;
   };
 
   return (
-    <div className={`rounded-lg border-2 ${rarityStyle.border} ${rarityStyle.bg} p-6`}>
+    <div
+      className={`rounded-lg border-2 ${rarityStyle.border} ${rarityStyle.bg} p-6`}
+    >
       {/* 头部 */}
       <div className="mb-4 flex items-start justify-between">
         <div>
@@ -258,23 +314,33 @@ export function WeaponDetailCard({ weapon }: { weapon: Weapon }) {
         <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3">
           <div className="flex justify-between">
             <span className="text-zinc-500">单发伤害</span>
-            <span className="text-white">{formatDamage(weapon.damage?.base, weapon.pellets)}</span>
+            <span className="text-white">
+              {formatDamage(weapon.damage?.base, weapon.pellets)}
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-zinc-500">冲击伤害</span>
-            <span className="text-white">{formatValue(weapon.damage?.impulse)}</span>
+            <span className="text-white">
+              {formatValue(weapon.damage?.impulse)}
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-zinc-500">破韧伤害</span>
-            <span className="text-white">{formatValue(weapon.damage?.toughness)}</span>
+            <span className="text-white">
+              {formatValue(weapon.damage?.toughness)}
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-zinc-500">血肉伤害</span>
-            <span className="text-white">{formatValue(weapon.damage?.flesh)}</span>
+            <span className="text-white">
+              {formatValue(weapon.damage?.flesh)}
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-zinc-500">受伤伤害</span>
-            <span className="text-white">{formatValue(weapon.damage?.hurtable)}</span>
+            <span className="text-white">
+              {formatValue(weapon.damage?.hurtable)}
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-zinc-500">弱点倍率</span>
@@ -289,7 +355,9 @@ export function WeaponDetailCard({ weapon }: { weapon: Weapon }) {
         <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3">
           <div className="flex justify-between">
             <span className="text-zinc-500">射速</span>
-            <span className="text-white">{formatFireRate(weapon.fire_interval)}</span>
+            <span className="text-white">
+              {formatFireRate(weapon.fire_interval)}
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-zinc-500">弹夹</span>
@@ -301,18 +369,26 @@ export function WeaponDetailCard({ weapon }: { weapon: Weapon }) {
           </div>
           <div className="flex justify-between">
             <span className="text-zinc-500">换弹时间</span>
-            <span className="text-white">{formatValue(weapon.reload_time)}</span>
+            <span className="text-white">
+              {formatValue(weapon.reload_time)}
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-zinc-500">技能冷却</span>
-            <span className="text-white">{formatValue(weapon.skill_cooldown)}</span>
+            <span className="text-white">
+              {formatValue(weapon.skill_cooldown)}
+            </span>
           </div>
-          {weapon.skill_cooldown && weapon.skill_cooldown !== "" && weapon.skill_cooldown !== -1 && (
-            <div className="flex justify-between">
-              <span className="text-zinc-500">充能速率</span>
-              <span className="text-white">{(100 / Number(weapon.skill_cooldown)).toFixed(2)}%</span>
-            </div>
-          )}
+          {weapon.skill_cooldown &&
+            weapon.skill_cooldown !== "" &&
+            weapon.skill_cooldown !== -1 && (
+              <div className="flex justify-between">
+                <span className="text-zinc-500">充能速率</span>
+                <span className="text-white">
+                  {(100 / Number(weapon.skill_cooldown)).toFixed(2)}%
+                </span>
+              </div>
+            )}
           <div className="flex justify-between">
             <span className="text-zinc-500">精准度</span>
             <span className="text-white">{formatValue(weapon.accuracy)}</span>
@@ -320,6 +396,35 @@ export function WeaponDetailCard({ weapon }: { weapon: Weapon }) {
           <div className="flex justify-between">
             <span className="text-zinc-500">稳定度</span>
             <span className="text-white">{formatValue(weapon.stability)}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 武器衰减 */}
+      <div className="mb-4">
+        <h2 className="mb-2 text-sm font-semibold text-zinc-400">武器衰减</h2>
+        <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3">
+          <div className="flex justify-between">
+            <span className="text-zinc-500">开始衰减</span>
+            <span className="text-white">
+              {formatMeter(weapon.attenuation_begin)}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-zinc-500">结束衰减</span>
+            <span className="text-white">
+              {formatMeter(weapon.attenuation_end)}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-zinc-500">衰减速率</span>
+            <span className="text-white">
+              {formatAttenuationSpeed(
+                weapon.attenuation_begin,
+                weapon.attenuation_end,
+                weapon.attenuation_scale,
+              )}
+            </span>
           </div>
         </div>
       </div>
@@ -334,16 +439,22 @@ export function WeaponDetailCard({ weapon }: { weapon: Weapon }) {
           </div>
           <div className="flex justify-between">
             <span className="text-zinc-500">可以暴击</span>
-            <span className="text-white">{weapon.enable_critical ? "是" : "否"}</span>
+            <span className="text-white">
+              {weapon.enable_critical ? "是" : "否"}
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-zinc-500">无视护盾</span>
-            <span className="text-white">{weapon.ignore_shield ? "是" : "否"}</span>
+            <span className="text-white">
+              {weapon.ignore_shield ? "是" : "否"}
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-zinc-500">元素异常概率</span>
             <span className="text-white">
-              {weapon.element_add_rate > 0 ? `${(weapon.element_add_rate * 100).toFixed(1)}%` : "-"}
+              {weapon.element_add_rate > 0
+                ? `${(weapon.element_add_rate * 100).toFixed(1)}%`
+                : "-"}
             </span>
           </div>
         </div>

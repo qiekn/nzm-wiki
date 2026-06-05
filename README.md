@@ -347,6 +347,7 @@ Buff/Debuff 卡片系统，数据来自 `data/cards-data.json`。
 
 ```mdx
 <AtkChart />          {/* 武器攻击力强化等级 / 消耗折线图 */}
+<WeaponAttenuationChart /> {/* 当前武器伤害衰减图 */}
 <CritCalculator />    {/* 暴击期望计算器（含概率坍缩机制） */}
 <DamageCalculator />  {/* 武器伤害计算器 */}
 <PeekabooGrid />      {/* 捉迷藏物品图鉴网格 */}

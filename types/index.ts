@@ -68,6 +68,9 @@ export interface Weapon {
   reload_time?: number | string | null;
   range?: number | string;
   explosion_range?: number | string;
+  attenuation_begin?: number | string | null;
+  attenuation_end?: number | string | null;
+  attenuation_scale?: number | string | null;
   ignore_shield: boolean;
   element_add_rate: number;
   skill_cooldown?: number | string;

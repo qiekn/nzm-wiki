@@ -1,10 +1,16 @@
 import { getMDXList, getMDXDetail } from "@/lib/mdx";
 import { getWeaponBySlug } from "@/lib/weapons";
 import { WeaponDetailCard } from "@/components/WeaponCard";
+import {
+  WeaponAttenuationChart,
+  type WeaponAttenuationChartProps,
+} from "@/components/WeaponAttenuationChart";
+import { WeaponSkill } from "@/components/WeaponSkill";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { mdxComponents, TableOfContents } from "@/lib/mdx-components";
 import { mdxOptions } from "@/lib/mdx-options";
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 
 export async function generateStaticParams() {
   const items = getMDXList("weapons");
@@ -71,6 +77,22 @@ export default async function WeaponDetailPage({
     );
   }
 
+  const AttenuationChartForWeapon = (props: WeaponAttenuationChartProps) => (
+    <WeaponAttenuationChart {...props} weapon={props.weapon ?? weapon} />
+  );
+  const WeaponSkillForWeapon = ({ children }: { children: ReactNode }) => (
+    <>
+      <WeaponSkill>{children}</WeaponSkill>
+      <WeaponAttenuationChart weapon={weapon} />
+    </>
+  );
+  const weaponMdxComponents = {
+    ...mdxComponents,
+    AttenuationChart: AttenuationChartForWeapon,
+    WeaponAttenuationChart: AttenuationChartForWeapon,
+    WeaponSkill: WeaponSkillForWeapon,
+  };
+
   return (
     <>
       <TableOfContents enabled={showToc} />
@@ -84,7 +106,7 @@ export default async function WeaponDetailPage({
           <article className="prose prose-lg prose-invert mt-8 max-w-none">
             <MDXRemote
               source={content}
-              components={mdxComponents}
+              components={weaponMdxComponents}
               options={mdxOptions}
             />
           </article>

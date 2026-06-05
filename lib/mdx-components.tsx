@@ -27,6 +27,10 @@ import { MDXImage } from "@/components/MDXImage";
 import { MDXLink } from "@/components/MDXLink";
 import { VideoGif } from "@/components/VideoGif";
 import { AtkChart } from "@/components/AtkChart";
+import {
+  AttenuationChart,
+  WeaponAttenuationChart,
+} from "@/components/WeaponAttenuationChart";
 import { CritCalculator } from "@/components/CritCalculator";
 import { DamageCalculator } from "@/components/DamageCalculator";
 import {
@@ -69,6 +73,8 @@ export const mdxComponents = {
   Highlight,
   VideoGif,
   AtkChart,
+  AttenuationChart,
+  WeaponAttenuationChart,
   CritCalculator,
   DamageCalculator,
   WeaponSkill,
