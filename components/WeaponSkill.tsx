@@ -135,6 +135,7 @@ export function PassiveSkill(props: Omit<BaseSkillProps, "tagColor">) {
       // tag="被动技能"
       // tagColor="bg-[#30393e] text-slate-300"
       {...props}
+      tag={undefined}
     />
   );
 }
