@@ -19,7 +19,9 @@ export type WeaponType =
   | "弓箭"
   | "喷射器"
   | "射手步枪"
-  | "连发榴弹";
+  | "连发榴弹"
+  | "暗器"
+  | "激光武器";
 
 export type ElementType = "物理" | "火焰" | "寒冷" | "电弧" | "腐蚀";
 

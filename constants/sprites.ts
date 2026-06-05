@@ -40,7 +40,7 @@ export const STAT_SPRITES: Record<string, SpriteConfig> = {
   crit:                 { x: 1265, y: 1523, width: 96, height: 96, sheet: "common" }, // 暴击 (Hunter_boss_damege)
 };
 
-// 武器类型图标坐标 (weapon_type.png, 748x1360)
+// 武器类型图标坐标 (weapon_type.png, 748x1659)
 // 坐标来自 UE PaperSprite 的 BakedSourceUV / BakedSourceDimension
 // rotated=true 表示精灵图中宽高互换（顺时针旋转90度存储）
 export const WEAPON_TYPE_SPRITES: Record<WeaponType, SpriteConfig> = {
@@ -56,6 +56,8 @@ export const WEAPON_TYPE_SPRITES: Record<WeaponType, SpriteConfig> = {
   弓箭:       { x: 441, y: 1,    width: 438, height: 148, sheet: "weapon_type", rotated: true }, // Bow
   射手步枪:   { x: 441, y: 441,  width: 438, height: 148, sheet: "weapon_type", rotated: true }, // DMR
   火箭发射器: { x: 441, y: 881,  width: 438, height: 148, sheet: "weapon_type", rotated: true }, // Launcher
+  暗器:       { x: 1, y: 1351,  width: 438, height: 148, sheet: "weapon_type" },                // Throwing — 来自玄凌飞刃图标
+  激光武器:   { x: 1, y: 1501,  width: 438, height: 148, sheet: "weapon_type" },                // Laser — 来自浪里白条图标
 };
 
 // 武器槽位图标（复用武器类型精灵）

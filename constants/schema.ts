@@ -83,6 +83,8 @@ export const FIELD_OPTIONS: Record<string, string[]> = {
     "射手步枪",
     "连发榴弹",
     "喷射器",
+    "暗器",
+    "激光武器",
   ],
   element: ["物理", "火焰", "寒冷", "电弧", "腐蚀"],
   scope: ["不可开镜", "低倍镜", "中倍镜", "高倍镜"],

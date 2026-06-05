@@ -26,6 +26,8 @@ export const WEAPON_TYPES: { type: WeaponType; icon: string; sprite: SpriteConfi
   { type: "射手步枪", icon: "", sprite: WEAPON_TYPE_SPRITES["射手步枪"] },
   { type: "连发榴弹", icon: "", sprite: WEAPON_TYPE_SPRITES["连发榴弹"] },
   { type: "喷射器", icon: "", sprite: WEAPON_TYPE_SPRITES["喷射器"] },
+  { type: "暗器", icon: "", sprite: WEAPON_TYPE_SPRITES["暗器"] },
+  { type: "激光武器", icon: "", sprite: WEAPON_TYPE_SPRITES["激光武器"] },
 ];
 
 export const ELEMENT_TYPES: { type: keyof typeof ELEMENT_COLORS; iconSrc: string; color: string }[] = [
