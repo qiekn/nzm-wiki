@@ -355,9 +355,9 @@ export function WeaponDetailCard({ weapon }: { weapon: Weapon }) {
         </div>
       </div>
 
-      {/* 武器属性 */}
+      {/* 基础属性 */}
       <div className="mb-4">
-        <h2 className="mb-2 text-sm font-semibold text-zinc-400">武器属性</h2>
+        <h2 className="mb-2 text-sm font-semibold text-zinc-400">基础属性</h2>
         <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3">
           <div className="flex justify-between">
             <span className="text-zinc-500">射速</span>
@@ -406,9 +406,9 @@ export function WeaponDetailCard({ weapon }: { weapon: Weapon }) {
         </div>
       </div>
 
-      {/* 武器衰减 */}
+      {/* 伤害衰减 */}
       <div className="mb-4">
-        <h2 className="mb-2 text-sm font-semibold text-zinc-400">武器衰减</h2>
+        <h2 className="mb-2 text-sm font-semibold text-zinc-400">伤害衰减</h2>
         <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3">
           <div className="flex justify-between">
             <span className="text-zinc-500">开始衰减</span>
