@@ -15,13 +15,22 @@ const ELEMENT_ICONS: Record<ElementType, string> = {
   物理: "/icons/elements/kinetic.png",
 };
 
+function formatSingleDecimal(value: number): string {
+  const rounded = Math.round(value * 10) / 10;
+  const roundedInt = Math.round(rounded);
+  if (Math.abs(rounded - roundedInt) < 0.001) {
+    return String(roundedInt);
+  }
+  return rounded.toFixed(1);
+}
+
 function formatDamage(base: number | undefined | null, pellets?: number): string {
   if (base === null || base === undefined) return "-";
-  const damage = Math.round(base * 500);
+  const damage = formatSingleDecimal(base * 500);
   if (pellets && pellets > 1) {
     return `${damage} x ${pellets}`;
   }
-  return String(damage);
+  return damage;
 }
 
 function WeaponImage({ name, size = "normal" }: { name: string; size?: "small" | "normal" }) {
