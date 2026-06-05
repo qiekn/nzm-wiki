@@ -43,6 +43,7 @@ next-env.d.ts
 
 # for qiekn
 /refs
+/fork/
 /CLAUDE.md
 /log.txt
 
