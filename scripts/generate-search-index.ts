@@ -224,6 +224,7 @@ function generateWeaponStats() {
     fire_interval: number | null;
     magazine: number | null;
     reload_time: number | null;
+    asc_type_id: number | string | null;
     attenuation_begin: number | null;
     attenuation_end: number | null;
     attenuation_scale: number | null;
@@ -260,6 +261,7 @@ function generateWeaponStats() {
       fire_interval: typeof data.fire_interval === "number" ? data.fire_interval : null,
       magazine: typeof data.magazine === "number" ? data.magazine : null,
       reload_time: typeof data.reload_time === "number" ? data.reload_time : null,
+      asc_type_id: data.asc_type_id ?? null,
       attenuation_begin: typeof data.attenuation_begin === "number" ? data.attenuation_begin : null,
       attenuation_end: typeof data.attenuation_end === "number" ? data.attenuation_end : null,
       attenuation_scale: typeof data.attenuation_scale === "number" ? data.attenuation_scale : null,

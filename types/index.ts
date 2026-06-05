@@ -75,6 +75,7 @@ export interface Weapon {
   element_add_rate: number;
   skill_cooldown?: number | string;
   pellets?: number;
+  asc_type_id?: number | string;
   draft?: boolean;
 }
 
