@@ -105,8 +105,8 @@ pattern: "武器1":|"武器2":|...
   <ActiveSkill
     name="技能名"
     icon="/icons/weapons/skills/T_Weapon_Skill_XXX_2.png"
-    duration={15}
-    cooldown={30}
+    duration={69,105}
+    cooldown={69,105}
     count={1}
   >
     技能描述，数值用 <Yellow>值</Yellow> 包裹。
