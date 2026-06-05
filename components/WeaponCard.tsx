@@ -24,6 +24,12 @@ function formatSingleDecimal(value: number): string {
   return rounded.toFixed(1);
 }
 
+function formatChargeRate(skillCooldown: number | string | null | undefined): string {
+  const cooldown = Number(skillCooldown);
+  if (!Number.isFinite(cooldown) || cooldown <= 0) return "-";
+  return `${(100 / cooldown).toFixed(2).replace(/\.?0+$/, "")}%`;
+}
+
 function formatDamage(
   base: number | undefined | null,
   pellets?: number,
@@ -385,7 +391,7 @@ export function WeaponDetailCard({ weapon }: { weapon: Weapon }) {
               <div className="flex justify-between">
                 <span className="text-zinc-500">充能速率</span>
                 <span className="text-white">
-                  {(100 / Number(weapon.skill_cooldown)).toFixed(2)}%
+                  {formatChargeRate(weapon.skill_cooldown)}
                 </span>
               </div>
             )}
