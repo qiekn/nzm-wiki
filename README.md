@@ -367,8 +367,8 @@ python3 ./scripts/convert.py "/e/games/WeGameApps/rail_apps/逆战：未来(2002
 ./scripts/decrypt.sh NZM/Content/AIBehavior/
 ```
 
-详细介绍移步此视频 [BV1fVfXB8EkT](https://www.bilibili.com/video/BV1fVfXB8EkT)
+更多详细介绍 [BV1fVfXB8EkT](https://www.bilibili.com/video/BV1fVfXB8EkT)
 
 ## 更多内容
 
-更多关于逆战未来的内容，见 https://qiekn.notion.site/nzm (我的一些随手记，类似于草稿纸)
+更多关于逆战未来的内容，见 https://qiekn.notion.site/nzm (我的一些随手笔记，类似于草稿纸)
