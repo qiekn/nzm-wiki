@@ -14,7 +14,7 @@ import matter from "gray-matter";
 
 const EXPORT_CONTENT_DIR = path.join(process.cwd(), "refs/Exports/NZM/Content");
 const WEAPONS_DIR = path.join(process.cwd(), "data/weapons");
-const WEAPON_IMAGE_DIR = path.join(process.cwd(), "public/icons/weapons/large");
+const WEAPON_IMAGE_DIR = path.join(process.cwd(), "public/icons/weapons/normal");
 const SKILL_IMAGE_DIR = path.join(process.cwd(), "public/icons/weapons/skills");
 
 const TYPE_BY_ID: Record<number, string> = {
@@ -28,6 +28,7 @@ const TYPE_BY_ID: Record<number, string> = {
   8: "单发榴弹",
   9: "弓箭",
   10: "射手步枪",
+  13: "近战武器",
   14: "激光武器",
   15: "喷射器",
   16: "连发榴弹",
@@ -108,6 +109,10 @@ function round(value: number): number {
   return Number(value.toFixed(4));
 }
 
+function ceilToSingleDecimal(value: number): number {
+  return Math.ceil(value * 10) / 10;
+}
+
 function assetName(assetPathName: string | undefined): string | undefined {
   if (!assetPathName || assetPathName === "None") return undefined;
   return assetPathName.split("/").pop()?.split(".")[0];
@@ -125,7 +130,7 @@ function assetPathToFile(assetPathName: string | undefined): string | null {
 function assetPlan(kind: "weapon" | "skill", assetPathName: string | undefined, destName: string): AssetPlan | undefined {
   if (!assetPathName || assetPathName === "None") return undefined;
   const destDir = kind === "weapon" ? WEAPON_IMAGE_DIR : SKILL_IMAGE_DIR;
-  const webDir = kind === "weapon" ? "/icons/weapons/large" : "/icons/weapons/skills";
+  const webDir = kind === "weapon" ? "/icons/weapons/normal" : "/icons/weapons/skills";
   return {
     kind,
     assetPathName,
@@ -150,10 +155,16 @@ function findByField(rows: Rows, field: string, value: any): [string, JsonRow] |
   return Object.entries(rows).find(([, row]) => String(row[field]) === wanted);
 }
 
+function prototypeRowByTitle(rows: Rows, title: string): [string, JsonRow] | undefined {
+  const keys = [title, `${title}_`];
+  for (const key of keys) if (rows[key]) return [key, rows[key]];
+  return undefined;
+}
+
 function findPrototypeRow(rows: Rows, weapon: WeaponFile): [string, JsonRow] | undefined {
   const prototypeId = weapon.data.prototype_id == null ? undefined : String(weapon.data.prototype_id);
   const matches = Object.entries(rows).filter(([, row]) => prototypeId && String(row.PrototypeID) === prototypeId);
-  if (matches.length === 0) return rows[weapon.title] ? [weapon.title, rows[weapon.title]] : undefined;
+  if (matches.length === 0) return prototypeRowByTitle(rows, weapon.title);
   matches.sort(([, a], [, b]) => {
     if (a.Mode === 0 && b.Mode !== 0) return -1;
     if (a.Mode !== 0 && b.Mode === 0) return 1;
@@ -201,18 +212,53 @@ function duration(skillConfig: JsonRow | undefined): number | number[] | undefin
   return values.length === 0 ? undefined : values.length === 1 ? values[0] : values;
 }
 
+function positiveId(value: any): string | undefined {
+  const valueNumber = num(value);
+  if (valueNumber == null || valueNumber <= 0) return undefined;
+  return String(value);
+}
+
+function findNumericalRowById(numericalRows: Rows, value: any): [string, JsonRow] | undefined {
+  const id = positiveId(value);
+  if (!id) return undefined;
+
+  const exact = numericalRows[`${id}_1`] ? [`${id}_1`, numericalRows[`${id}_1`]] : numericalRows[id] ? [id, numericalRows[id]] : undefined;
+  if (exact) return exact as [string, JsonRow];
+
+  return findByField(numericalRows, "id", id);
+}
+
+function findNumericalRow(numericalRows: Rows, prototype: JsonRow): [string, JsonRow] | undefined {
+  const ids = [
+    positiveId(prototype.NumericalID),
+    positiveId(prototype.HeavyHitNumericalID),
+    positiveId(prototype.LightHitNumericalID),
+  ].filter((id): id is string => Boolean(id));
+
+  for (const id of ids) {
+    const exact = findNumericalRowById(numericalRows, id);
+    if (exact) return exact;
+  }
+
+  return undefined;
+}
+
 function extractWeapon(weapon: WeaponFile, tables: Record<string, Rows>) {
   const prototypeMatch = findPrototypeRow(tables.prototype, weapon);
   if (!prototypeMatch) throw new Error(`Cannot find WeaponPrototypeConfig row for ${weapon.title}`);
   const [prototypeKey, prototype] = prototypeMatch;
   const prototypeId = String(prototype.PrototypeID);
+  const weaponTypeId = num(prototype.WeaponType);
   const ascTypeId = String(prototype.ASCTypeID);
   const asc = tables.asc[ascTypeId] ?? findByField(tables.asc, "ASCTypeID", ascTypeId)?.[1];
   if (!asc) throw new Error(`Cannot find attr_weapon_asc row ${ascTypeId} for ${weapon.title}`);
 
   const numericalId = prototype.NumericalID;
-  const numerical = tables.numerical[`${numericalId}_1`] ?? findByField(tables.numerical, "id", numericalId)?.[1];
-  if (!numerical) throw new Error(`Cannot find numerical_config_equip row ${numericalId}_1 for ${weapon.title}`);
+  const numericalMatch = findNumericalRow(tables.numerical, prototype);
+  const numerical = numericalMatch?.[1];
+  if (!numerical && weaponTypeId !== 13) throw new Error(`Cannot find numerical_config_equip row ${numericalId}_1 for ${weapon.title}`);
+  const lightHitNumerical = weaponTypeId === 13 ? findNumericalRowById(tables.numerical, prototype.LightHitNumericalID)?.[1] : undefined;
+  const heavyHitNumerical = weaponTypeId === 13 ? findNumericalRowById(tables.numerical, prototype.HeavyHitNumericalID)?.[1] : undefined;
 
   const weaponItem = findModelRow(tables.weaponItem, prototypeId)?.[1];
   const commonItem = weaponItem ? tables.commonItem[String(weaponItem.ItemID)] : undefined;
@@ -227,14 +273,14 @@ function extractWeapon(weapon: WeaponFile, tables: Record<string, Rows>) {
     const asset = row.MGEIcon?.AssetPathName;
     return typeof asset === "string" && asset.includes(`T_Weapon_Skill_${prototypeId}`);
   });
-  const weaponTypeId = num(prototype.WeaponType);
   const quality = num(commonItem?.Quality);
-  const weakAdd = num(numerical.WeaknessDamageAddScale);
+  const weakAdd = num(numerical?.WeaknessDamageAddScale);
   const reloadModId = luaItem?.WeaponMODConfigID == null ? undefined : String(luaItem.WeaponMODConfigID);
-  const reloadFeel = reloadModId ? tables.feel[reloadModId] : undefined;
+  const reloadSourceId = tables.feel[ascTypeId] ? ascTypeId : reloadModId;
+  const reloadFeel = reloadSourceId ? tables.feel[reloadSourceId] : undefined;
   const reloadBase = num(reloadFeel?.WeaponChangeClipTimeBase);
   const reloadEndToFire = num(reloadFeel?.WeaponChangeClipEndToFireTime) ?? 0;
-  const reloadTime = reloadBase == null ? undefined : Math.ceil(reloadBase + reloadEndToFire);
+  const reloadTime = reloadBase == null ? undefined : ceilToSingleDecimal(reloadBase + reloadEndToFire);
 
   const title = localized(commonItem?.Name) ?? weaponItem?.WeaponName ?? prototypeKey;
   const weaponIconAsset = commonItem?.IconPath?.LargeIcon?.AssetPathName ?? commonItem?.IconPath?.NormalIcon?.AssetPathName;
@@ -257,19 +303,23 @@ function extractWeapon(weapon: WeaponFile, tables: Record<string, Rows>) {
     prototype_id: prototypeId,
     asc_type_id: num(ascTypeId) ?? ascTypeId,
     active_skill_id: activeSkillId,
-    element: ELEMENT_BY_ENUM[String(numerical.ElementType)] ?? weapon.data.element,
+    element: numerical ? ELEMENT_BY_ENUM[String(numerical.ElementType)] ?? weapon.data.element : weapon.data.element,
     rarity: quality == null ? undefined : RARITY_BY_QUALITY[quality],
     scope: localized(luaItem?.Weapon_Scope),
-    damage: {
+    damage: numerical ? {
       base: num(numerical.HpCalScale),
       impulse: num(numerical.ImpulseBase),
       toughness: num(numerical.ToughnessBase),
       flesh: num(numerical.FleshDamageBase),
       hurtable: num(numerical.HurtableBase),
-    },
-    toughness_type: TOUGHNESS_TYPE_BY_ENUM[String(numerical.ToughnessDamageType)],
-    enable_critical: numerical.bEnableCriticalDamage,
-    weekness_multiplier: numerical.EnableWeaknessDamage && weakAdd != null ? round(1 + weakAdd) : null,
+    } : undefined,
+    melee_damage: weaponTypeId === 13 ? {
+      light: num(lightHitNumerical?.HpCalScale ?? numerical?.HpCalScale),
+      heavy: num(heavyHitNumerical?.HpCalScale ?? numerical?.HpCalScale),
+    } : undefined,
+    toughness_type: numerical ? TOUGHNESS_TYPE_BY_ENUM[String(numerical.ToughnessDamageType)] : undefined,
+    enable_critical: numerical?.bEnableCriticalDamage,
+    weekness_multiplier: numerical?.EnableWeaknessDamage && weakAdd != null ? round(1 + weakAdd) : null,
     fire_interval: num(asc.FireIntervalBase),
     magazine: num(asc.ClipAmmoCountBase),
     total_ammo: num(asc.MaxAmmoCount),
@@ -279,8 +329,8 @@ function extractWeapon(weapon: WeaponFile, tables: Record<string, Rows>) {
     attenuation_begin: num(asc.DistanceBeginAttenuationBase) == null ? undefined : round(Number(asc.DistanceBeginAttenuationBase) / 100),
     attenuation_end: num(asc.DistanceEndAttenuationBase) == null ? undefined : round(Number(asc.DistanceEndAttenuationBase) / 100),
     attenuation_scale: num(asc.AttenuationMinScale),
-    ignore_shield: numerical.bDamageIgnoreShield,
-    element_add_rate: num(numerical.ElementAddRate),
+    ignore_shield: numerical?.bDamageIgnoreShield,
+    element_add_rate: num(numerical?.ElementAddRate),
     skill_cooldown: num(active?.ChargeNeedTime),
     pellets: (num(asc.SplinterNum) ?? 0) > 1 ? num(asc.SplinterNum) : undefined,
   };
@@ -297,17 +347,120 @@ function extractWeapon(weapon: WeaponFile, tables: Record<string, Rows>) {
     source: {
       prototype: `WeaponPrototypeConfig.Rows.${prototypeKey}`,
       asc: `attr_weapon_asc.Rows.${ascTypeId}`,
-      numerical: `numerical_config_equip.Rows.${numericalId}_1`,
+      numerical: numericalMatch ? `numerical_config_equip.Rows.${numericalMatch[0]}` : undefined,
       weaponItem: weaponItem ? `WeaponItemTable.ModelID=${prototypeId}` : undefined,
       commonItem: commonItem ? `CommonItemDataTable.Rows.${weaponItem?.ItemID}` : undefined,
       luaItem: luaItem ? `LuaDataTable/WeaponItemConfigTable.ModelID=${prototypeId}` : undefined,
       recoilScore: recoilScore ? `Weapon/WeaponRecoilScoreTable.Rows.${prototypeId}` : undefined,
-      reload: reloadFeel ? `WeaponFeelParamTable.Rows.${reloadModId}` : undefined,
+      reload: reloadFeel ? `WeaponFeelParamTable.Rows.${reloadSourceId}` : undefined,
     },
     skills: { active, activeDescription, activeIcon, passive, mechanismTags: mechanismTags(prototype.WeaponMechanismTags ?? []) },
   };
 }
 
+function jsxAttribute(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function mdxText(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/\{/g, "&#123;")
+    .replace(/\}/g, "&#125;");
+}
+
+function unresolvedTemplate(value: string): string {
+  return `？${mdxText(value)}？`;
+}
+
+function mdxDescription(raw: string | undefined): string {
+  if (!raw) return "技能描述信息(待更新)";
+  return raw
+    .replace(/[\u200b\u200c\ufeff]/g, "")
+    .replace(/\r\n/g, "\n")
+    .replace(/\{[^}]+\}/g, (value) => unresolvedTemplate(value))
+    .replace(/<qiangdiao>([\s\S]*?)<\/?>/g, "<Yellow>$1</Yellow>")
+    .replace(/<T\d+>([\s\S]*?)<\/?>/g, "<Blue>$1</Blue>")
+    .replace(/<(?!\/?(?:Yellow|Blue)\b)[^>]+>/g, "")
+    .trim() || "技能描述信息(待更新)";
+}
+
+function indentedDescription(raw: string | undefined): string {
+  return mdxDescription(raw)
+    .split("\n")
+    .map((line) => `    ${line.trim()}`)
+    .join("\n");
+}
+
+function skillIconPath(iconName: string | undefined): string {
+  return iconName ? `/icons/weapons/skills/${iconName}.png` : "/icons/weapons/skills/T_Weapon_Skill_effect_01.png";
+}
+
+function jsxNumberProp(name: string, value: any): string | undefined {
+  const numberValue = num(value);
+  return numberValue == null ? undefined : `${name}={${numberValue}}`;
+}
+
+function activeSkillMdx(skills: any): string | undefined {
+  const name = localized(skills.activeDescription?.SkillName) ?? skills.active?.SkillName;
+  const description = localized(skills.activeDescription?.SkillDescription);
+  if (!name && !description && !skills.activeIcon) return undefined;
+
+  const props = [
+    `name="${jsxAttribute(String(name ?? "主动技能"))}"`,
+    `icon="${jsxAttribute(skillIconPath(skills.activeIcon))}"`,
+    typeof duration(skills.active) === "number" ? `duration={${duration(skills.active)}}` : undefined,
+    jsxNumberProp("cooldown", skills.active?.ChargeNeedTime),
+    jsxNumberProp("count", skills.active?.SkillCount),
+  ].filter((prop): prop is string => Boolean(prop));
+
+  return [
+    "  <ActiveSkill",
+    ...props.map((prop) => `    ${prop}`),
+    "  >",
+    indentedDescription(description),
+    "  </ActiveSkill>",
+  ].join("\n");
+}
+
+function passiveSkillMdx(row: JsonRow, fallbackTag: string | undefined): string {
+  const name = localized(row.MGEName) ?? "被动技能";
+  const description = localized(row.MGEDescription);
+  const icon = assetName(row.MGEIcon?.AssetPathName);
+  const tag = fallbackTag ? `tag="${jsxAttribute(fallbackTag)}"` : undefined;
+  const props = [
+    `name="${jsxAttribute(name)}"`,
+    tag,
+    `icon="${jsxAttribute(skillIconPath(icon))}"`,
+  ].filter((prop): prop is string => Boolean(prop));
+
+  return [
+    "  <PassiveSkill",
+    ...props.map((prop) => `    ${prop}`),
+    "  >",
+    indentedDescription(description),
+    "  </PassiveSkill>",
+  ].join("\n");
+}
+
+function buildSkillMdx(skills: any): string {
+  const blocks = [
+    activeSkillMdx(skills),
+    ...skills.passive.map((row: JsonRow) => passiveSkillMdx(row, skills.mechanismTags[0])),
+  ].filter((block): block is string => Boolean(block));
+
+  if (blocks.length === 0) return "";
+  return ["<WeaponSkill>", blocks.join("\n\n"), "</WeaponSkill>"].join("\n");
+}
+
+function applySkillBody(content: string, skillMdx: string): { content: string; changed: boolean } {
+  if (!skillMdx || content.includes("<WeaponSkill>")) return { content, changed: false };
+  return { content: `${content.replace(/\s*$/, "")}\n\n${skillMdx}\n`, changed: true };
+}
 function yamlScalar(value: any): string {
   if (value === null) return "null";
   if (typeof value === "number" || typeof value === "boolean") return String(value);
@@ -328,21 +481,34 @@ function yamlValue(key: string, value: any): string[] {
       `  hurtable: ${yamlScalar(value.hurtable)}`,
     ];
   }
+  if (key === "melee_damage" && value && typeof value === "object") {
+    return [
+      "melee_damage:",
+      `  light: ${yamlScalar(value.light)}`,
+      `  heavy: ${yamlScalar(value.heavy)}`,
+    ];
+  }
   return [`${key}: ${yamlScalar(value)}`];
+}
+
+function yamlBlockEnd(lines: string[], index: number): number {
+  let end = index + 1;
+  while (end < lines.length && /^\s+/.test(lines[end])) end++;
+  return end;
 }
 
 function replaceYamlBlock(lines: string[], key: string, value: any, insertAfter: string): boolean {
   const index = lines.findIndex((line) => line.startsWith(`${key}:`));
   const replacement = yamlValue(key, value);
   if (index >= 0) {
-    let end = index + 1;
-    while (end < lines.length && /^\s+/.test(lines[end])) end++;
+    const end = yamlBlockEnd(lines, index);
     if (lines.slice(index, end).join("\n") === replacement.join("\n")) return false;
     lines.splice(index, end - index, ...replacement);
     return true;
   }
   const anchorIndex = lines.findIndex((line) => line.startsWith(`${insertAfter}:`));
-  lines.splice(anchorIndex >= 0 ? anchorIndex + 1 : lines.length, 0, ...replacement);
+  const insertIndex = anchorIndex >= 0 ? yamlBlockEnd(lines, anchorIndex) : lines.length;
+  lines.splice(insertIndex, 0, ...replacement);
   return true;
 }
 
@@ -376,7 +542,8 @@ function updateFrontmatter(content: string, fields: Record<string, any>, current
     ["rarity", "element"],
     ["scope", "tags"],
     ["damage", "active_skill_id"],
-    ["toughness_type", "damage"],
+    ["melee_damage", "damage"],
+    ["toughness_type", "melee_damage"],
     ["enable_critical", "toughness_type"],
     ["weekness_multiplier", "enable_critical"],
     ["fire_interval", "weekness_multiplier"],
@@ -464,7 +631,7 @@ function selectWeapons(allWeapons: WeaponFile[], names: string[], includeMelee: 
   for (const name of names) {
     const match = allWeapons.find((weapon) => weapon.title === name || weapon.file.replace(/\.mdx$/, "") === name);
     if (match) selected.push(match);
-    else if (prototypeRows[name]) selected.push(createWeaponFile(name));
+    else if (prototypeRowByTitle(prototypeRows, name)) selected.push(createWeaponFile(name));
     else missing.push(name);
   }
 
@@ -522,7 +689,12 @@ function main() {
   for (const weapon of weapons) {
     try {
       const extracted = extractWeapon(weapon, tables);
-      const result = updateFrontmatter(weapon.content, extracted.fields, weapon.data, overwrite || !weapon.exists);
+      const frontmatterResult = updateFrontmatter(weapon.content, extracted.fields, weapon.data, overwrite || !weapon.exists);
+      const skillResult = applySkillBody(frontmatterResult.content, buildSkillMdx(extracted.skills));
+      const result = {
+        content: skillResult.content,
+        changedKeys: skillResult.changed ? [...frontmatterResult.changedKeys, "skills"] : frontmatterResult.changedKeys,
+      };
       if (result.changedKeys.length > 0 || !weapon.exists) {
         if (weapon.exists) changed.push({ title: weapon.title, keys: result.changedKeys });
         else created.push(weapon.title);
