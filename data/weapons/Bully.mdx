@@ -1,0 +1,51 @@
+---
+title: Bully
+use_type: 副武器
+weapon_type: 手枪
+element: 物理
+rarity: 传说
+weapon_type_id: 7
+prototype_id: '20007000035'
+asc_type_id: 375
+active_skill_id: 5004301
+damage:
+  base: 0.157
+  impulse: 1.9
+  toughness: 1.9
+  flesh: 1.9
+  hurtable: 1.9
+toughness_type: 冲击
+enable_critical: true
+weekness_multiplier: 1.3
+fire_interval: 0.116
+magazine: 32
+total_ammo: 320
+accuracy: 75
+stability: 78
+scope: 低倍镜
+attenuation_begin: 18
+attenuation_end: 40
+attenuation_scale: 0.5
+ignore_shield: false
+element_add_rate: 0
+skill_cooldown: 20
+---
+
+<WeaponSkill>
+  <ActiveSkill
+    name="无人机"
+    icon="/icons/weapons/skills/T_Weapon_Skill_20007000035_2.png"
+    cooldown={20}
+    count={1}
+  >
+    召唤一台无人机，无人机会自动攻击附近的敌人。
+    在机甲战和火力乱斗模式下无法释放该技能。
+  </ActiveSkill>
+
+  <PassiveSkill
+    name="枪盾"
+    icon="/icons/weapons/skills/T_Weapon_Skill_20007000035_1.png"
+  >
+    开镜时获得临时护盾，<Yellow>5秒</Yellow>内未受到伤害时，临时护盾开始回复。
+  </PassiveSkill>
+</WeaponSkill>

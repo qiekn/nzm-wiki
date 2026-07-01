@@ -56,6 +56,7 @@ export const WEAPON_TYPE_SPRITES: Record<WeaponType, SpriteConfig> = {
   弓箭:       { x: 441, y: 1,    width: 438, height: 148, sheet: "weapon_type", rotated: true }, // Bow
   射手步枪:   { x: 441, y: 441,  width: 438, height: 148, sheet: "weapon_type", rotated: true }, // DMR
   火箭发射器: { x: 441, y: 881,  width: 438, height: 148, sheet: "weapon_type", rotated: true }, // Launcher
+  近战武器:   { x: 591, y: 881,  width: 438, height: 148, sheet: "weapon_type", rotated: true }, // Melee
   暗器:       { x: 1, y: 1351,  width: 438, height: 148, sheet: "weapon_type" },                // Throwing — 来自玄凌飞刃图标
   激光武器:   { x: 1, y: 1501,  width: 438, height: 148, sheet: "weapon_type" },                // Laser — 来自浪里白条图标
 };

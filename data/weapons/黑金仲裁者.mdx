@@ -1,0 +1,50 @@
+---
+title: 黑金仲裁者
+use_type: 副武器
+weapon_type: 手枪
+element: 物理
+rarity: 传说
+weapon_type_id: 7
+prototype_id: '20007000033'
+asc_type_id: 359
+active_skill_id: 5103201
+damage:
+  base: 0.314
+  impulse: 3.7
+  toughness: 3.7
+  flesh: 3.9
+  hurtable: 3.9
+toughness_type: 冲击
+enable_critical: true
+weekness_multiplier: 1.3
+fire_interval: 0.26
+magazine: 24
+total_ammo: 168
+accuracy: 75
+stability: 55
+scope: 低倍镜
+attenuation_begin: 18
+attenuation_end: 40
+attenuation_scale: 0.5
+ignore_shield: false
+element_add_rate: 0
+skill_cooldown: 25
+---
+
+<WeaponSkill>
+  <ActiveSkill
+    name="点金弹"
+    icon="/icons/weapons/skills/T_Weapon_Skill_20007000033_1.png"
+    cooldown={25}
+    count={1}
+  >
+    蓄力发射一枚点金弹，爆炸范围内敌人被转化为<Yellow>黄金敌人</Yellow>，并施加减速效果。
+  </ActiveSkill>
+
+  <PassiveSkill
+    name="点金破绽"
+    icon="/icons/weapons/skills/T_Weapon_Skill_20007000033_2.png"
+  >
+    使用任何武器命中<Yellow>黄金敌人</Yellow>时，武器伤害增加<Yellow>30%</Yellow>。
+  </PassiveSkill>
+</WeaponSkill>

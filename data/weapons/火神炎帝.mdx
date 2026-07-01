@@ -1,0 +1,50 @@
+---
+title: 火神炎帝
+use_type: 主武器
+weapon_type: 机枪
+element: 火焰
+rarity: 传说
+weapon_type_id: 6
+prototype_id: '20006000030'
+asc_type_id: 365
+active_skill_id: 5103601
+damage:
+  base: 0.08
+  impulse: 0.9
+  toughness: 0.9
+  flesh: 0.7
+  hurtable: 0.7
+toughness_type: 冲击
+enable_critical: true
+weekness_multiplier: 1.3
+fire_interval: 0.06
+magazine: 200
+total_ammo: 1400
+accuracy: 80
+stability: 60
+reload_time: 5
+scope: 不可开镜
+attenuation_begin: 49
+attenuation_end: 60
+attenuation_scale: 0.6
+ignore_shield: false
+element_add_rate: 0.055
+skill_cooldown: 45
+---
+
+<WeaponSkill>
+  <ActiveSkill
+    name="架设模式"
+    icon="/icons/weapons/skills/T_Weapon_Skill_20006000029_2.png"
+  >
+    火神炎帝在<Blue>架设模式</Blue>和<Blue>机枪模式</Blue>之间切换，<Blue>架设模式</Blue>下火神炎帝射击时不消耗弹药。
+    在机甲战和火力乱斗模式下无法释放该技能。
+  </ActiveSkill>
+
+  <PassiveSkill
+    name="火力宣泄"
+    icon="/icons/weapons/skills/T_Weapon_Skill_20006000030_1.png"
+  >
+    <Blue>机枪模式</Blue>下火神炎帝射击时需要预热<Yellow>0.4秒</Yellow>。<Blue>架设模式</Blue>下，火神炎帝累计开火<Yellow>10次</Yellow>后会获得<Yellow>10层</Yellow><Blue>火力宣泄</Blue>效果，<Blue>火力宣泄</Blue>最多叠加<Yellow>300层</Yellow>。<Blue>火力宣泄</Blue>层数越多，<Blue>机枪模式</Blue>下的预热时间越短，最多缩短至<Yellow>0.1秒</Yellow>。<Blue>机枪模式</Blue>下射击命中敌人时会消耗<Yellow>3层</Yellow><Blue>火力宣泄</Blue>并使本次命中伤害提高<Yellow>200%</Yellow>（<Blue>火力宣泄</Blue>不足<Yellow>3层</Yellow>时消耗全部层数）。
+  </PassiveSkill>
+</WeaponSkill>

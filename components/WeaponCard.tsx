@@ -79,6 +79,21 @@ function formatAttenuationSpeed(
   return `${formatSingleDecimal(percentPerMeter)}%`;
 }
 
+function isMeleeWeapon(weapon: Weapon): boolean {
+  return (
+    Number(weapon.weapon_type_id) === 13 ||
+    weapon.use_type === "近战武器" ||
+    weapon.weapon_type === "近战武器"
+  );
+}
+
+function meleeDamageValue(
+  weapon: Weapon,
+  key: "light" | "heavy",
+): number | null | undefined {
+  return weapon.melee_damage?.[key] ?? weapon.damage?.base;
+}
+
 function WeaponImage({
   name,
   size = "normal",
@@ -148,6 +163,8 @@ function DetailedCard({ weapon }: { weapon: Weapon }) {
   const rarityStyle = RARITY_CARD_STYLES[rarityKey];
   const elementIcon = ELEMENT_ICONS[weapon.element];
   const tags = Array.isArray(weapon.tags) ? weapon.tags : [];
+  const isMelee = isMeleeWeapon(weapon);
+  const showAmmoStats = !isMelee;
 
   const formatValue = (val: number | string | null | undefined) => {
     if (val === null || val === undefined || val === "" || val === -1)
@@ -191,48 +208,79 @@ function DetailedCard({ weapon }: { weapon: Weapon }) {
         </div>
 
         <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2 text-base">
-          <div className="flex justify-between">
-            <span className="text-zinc-500">单发伤害</span>
-            <span className="text-white">
-              {formatDamage(weapon.damage?.base, weapon.pellets)}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-zinc-500">射速</span>
-            <span className="text-white">
-              {formatFireRate(weapon.fire_interval)}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-zinc-500">弹夹</span>
-            <span className="text-white">{formatValue(weapon.magazine)}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-zinc-500">总弹量</span>
-            <span className="text-white">{formatValue(weapon.total_ammo)}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-zinc-500">弱点倍率</span>
-            <span className="text-white">{weapon.weekness_multiplier}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-zinc-500">破韧伤害</span>
-            <span className="text-white">
-              {formatValue(weapon.damage?.toughness)}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-zinc-500">换弹时间</span>
-            <span className="text-white">
-              {formatValue(weapon.reload_time)}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-zinc-500">技能冷却</span>
-            <span className="text-white">
-              {formatValue(weapon.skill_cooldown)}
-            </span>
-          </div>
+          {isMelee ? (
+            <>
+              <div className="flex justify-between">
+                <span className="text-zinc-500">轻击伤害</span>
+                <span className="text-white">
+                  {formatDamage(meleeDamageValue(weapon, "light"))}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-500">重击伤害</span>
+                <span className="text-white">
+                  {formatDamage(meleeDamageValue(weapon, "heavy"))}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-500">元素异常</span>
+                <span className="text-white">
+                  {weapon.element_add_rate > 0
+                    ? `${(weapon.element_add_rate * 100).toFixed(1)}%`
+                    : "-"}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-500">弱点倍率</span>
+                <span className="text-white">{weapon.weekness_multiplier}</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex justify-between">
+                <span className="text-zinc-500">单发伤害</span>
+                <span className="text-white">
+                  {formatDamage(weapon.damage?.base, weapon.pellets)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-500">射速</span>
+                <span className="text-white">
+                  {formatFireRate(weapon.fire_interval)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-500">弹夹</span>
+                <span className="text-white">{formatValue(weapon.magazine)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-500">总弹量</span>
+                <span className="text-white">{formatValue(weapon.total_ammo)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-500">弱点倍率</span>
+                <span className="text-white">{weapon.weekness_multiplier}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-500">破韧伤害</span>
+                <span className="text-white">
+                  {formatValue(weapon.damage?.toughness)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-500">换弹时间</span>
+                <span className="text-white">
+                  {formatValue(weapon.reload_time)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-500">技能冷却</span>
+                <span className="text-white">
+                  {formatValue(weapon.skill_cooldown)}
+                </span>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </Link>
@@ -263,6 +311,8 @@ export function WeaponDetailCard({ weapon }: { weapon: Weapon }) {
   const rarityStyle = RARITY_CARD_STYLES[rarityKey];
   const elementIcon = ELEMENT_ICONS[weapon.element];
   const tags = Array.isArray(weapon.tags) ? weapon.tags : [];
+  const isMelee = isMeleeWeapon(weapon);
+  const showAmmoStats = !isMelee;
 
   const formatValue = (val: number | string | null | undefined) => {
     if (val === null || val === undefined || val === "" || val === -1)
@@ -318,12 +368,29 @@ export function WeaponDetailCard({ weapon }: { weapon: Weapon }) {
       <div className="mb-4">
         <h2 className="mb-2 text-sm font-semibold text-zinc-400">伤害数据</h2>
         <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3">
-          <div className="flex justify-between">
-            <span className="text-zinc-500">单发伤害</span>
-            <span className="text-white">
-              {formatDamage(weapon.damage?.base, weapon.pellets)}
-            </span>
-          </div>
+          {isMelee ? (
+            <>
+              <div className="flex justify-between">
+                <span className="text-zinc-500">轻击伤害</span>
+                <span className="text-white">
+                  {formatDamage(meleeDamageValue(weapon, "light"))}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-500">重击伤害</span>
+                <span className="text-white">
+                  {formatDamage(meleeDamageValue(weapon, "heavy"))}
+                </span>
+              </div>
+            </>
+          ) : (
+            <div className="flex justify-between">
+              <span className="text-zinc-500">单发伤害</span>
+              <span className="text-white">
+                {formatDamage(weapon.damage?.base, weapon.pellets)}
+              </span>
+            </div>
+          )}
           <div className="flex justify-between">
             <span className="text-zinc-500">冲击伤害</span>
             <span className="text-white">
@@ -359,26 +426,34 @@ export function WeaponDetailCard({ weapon }: { weapon: Weapon }) {
       <div className="mb-4">
         <h2 className="mb-2 text-sm font-semibold text-zinc-400">基础属性</h2>
         <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3">
+          {showAmmoStats && (
           <div className="flex justify-between">
             <span className="text-zinc-500">射速</span>
             <span className="text-white">
               {formatFireRate(weapon.fire_interval)}
             </span>
           </div>
+          )}
+          {showAmmoStats && (
           <div className="flex justify-between">
             <span className="text-zinc-500">弹夹</span>
             <span className="text-white">{formatValue(weapon.magazine)}</span>
           </div>
+          )}
+          {showAmmoStats && (
           <div className="flex justify-between">
             <span className="text-zinc-500">总弹量</span>
             <span className="text-white">{formatValue(weapon.total_ammo)}</span>
           </div>
+          )}
+          {showAmmoStats && (
           <div className="flex justify-between">
             <span className="text-zinc-500">换弹时间</span>
             <span className="text-white">
               {formatValue(weapon.reload_time)}
             </span>
           </div>
+          )}
           <div className="flex justify-between">
             <span className="text-zinc-500">技能冷却</span>
             <span className="text-white">
@@ -407,33 +482,35 @@ export function WeaponDetailCard({ weapon }: { weapon: Weapon }) {
       </div>
 
       {/* 伤害衰减 */}
-      <div className="mb-4">
-        <h2 className="mb-2 text-sm font-semibold text-zinc-400">伤害衰减</h2>
-        <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3">
-          <div className="flex justify-between">
-            <span className="text-zinc-500">开始衰减</span>
-            <span className="text-white">
-              {formatMeter(weapon.attenuation_begin)}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-zinc-500">结束衰减</span>
-            <span className="text-white">
-              {formatMeter(weapon.attenuation_end)}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-zinc-500">衰减速率</span>
-            <span className="text-white">
-              {formatAttenuationSpeed(
-                weapon.attenuation_begin,
-                weapon.attenuation_end,
-                weapon.attenuation_scale,
-              )}
-            </span>
+      {!isMelee && (
+        <div className="mb-4">
+          <h2 className="mb-2 text-sm font-semibold text-zinc-400">伤害衰减</h2>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3">
+            <div className="flex justify-between">
+              <span className="text-zinc-500">开始衰减</span>
+              <span className="text-white">
+                {formatMeter(weapon.attenuation_begin)}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-zinc-500">结束衰减</span>
+              <span className="text-white">
+                {formatMeter(weapon.attenuation_end)}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-zinc-500">衰减速率</span>
+              <span className="text-white">
+                {formatAttenuationSpeed(
+                  weapon.attenuation_begin,
+                  weapon.attenuation_end,
+                  weapon.attenuation_scale,
+                )}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* 特殊属性 */}
       <div>

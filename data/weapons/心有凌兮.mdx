@@ -1,0 +1,51 @@
+---
+title: 心有凌兮
+use_type: 主武器
+weapon_type: 单发榴弹
+element: 火焰
+rarity: 传说
+weapon_type_id: 8
+prototype_id: '20008000012'
+asc_type_id: 394
+active_skill_id: 5103901
+damage:
+  base: 0.867
+  impulse: 10.84
+  toughness: 10.84
+  flesh: 0
+  hurtable: 8.46
+toughness_type: 冲击
+enable_critical: true
+weekness_multiplier: 1.1
+fire_interval: 0.6
+magazine: 1
+total_ammo: 10
+accuracy: 67
+stability: 32
+reload_time: 2
+scope: 低倍镜
+attenuation_begin: 0
+attenuation_end: 0
+attenuation_scale: 1
+ignore_shield: false
+element_add_rate: 1
+skill_cooldown: 1
+---
+
+<WeaponSkill>
+  <ActiveSkill
+    name="一起来跳舞"
+    icon="/icons/weapons/skills/T_Weapon_Skill_5103901.png"
+    duration={40}
+  >
+    让我们忘掉那些不开心的事，一起来跳舞！跳舞后，提升武器伤害<Yellow>10%</Yellow>，持续<Yellow>40秒</Yellow>。
+  </ActiveSkill>
+
+  <PassiveSkill
+    name="爆炸疗愈"
+    tag="爆炸"
+    icon="/icons/weapons/skills/T_Weapon_Skill_20008000012_1.png"
+  >
+    爆炸既可伤害敌人，也可为命中的友方恢复<Yellow>10%</Yellow>总生命值。
+  </PassiveSkill>
+</WeaponSkill>

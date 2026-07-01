@@ -21,6 +21,7 @@ export type WeaponType =
   | "射手步枪"
   | "连发榴弹"
   | "暗器"
+  | "近战武器"
   | "激光武器";
 
 export type ElementType = "物理" | "火焰" | "寒冷" | "电弧" | "腐蚀";
@@ -44,6 +45,11 @@ export interface WeaponDamage {
   hurtable: number;
 }
 
+export interface WeaponMeleeDamage {
+  light?: number;
+  heavy?: number;
+}
+
 /**
  * 完整武器数据接口（匹配 MDX frontmatter）
  */
@@ -52,11 +58,13 @@ export interface Weapon {
   title: string;
   use_type?: string;
   weapon_type?: WeaponType;
+  weapon_type_id?: number | string;
   element: ElementType;
   rarity?: Rarity;
   tags?: WeaponTag[] | string;
   scope?: ScopeType | string;
   damage: WeaponDamage | null;
+  melee_damage?: WeaponMeleeDamage | null;
   toughness_type: ToughnessType;
   enable_critical: boolean;
   weekness_multiplier: number;

@@ -1,0 +1,54 @@
+---
+title: 疾影逐风
+use_type: 主武器
+weapon_type: 霰弹枪
+element: 物理
+rarity: 传说
+weapon_type_id: 3
+prototype_id: '20003000031'
+asc_type_id: 381
+active_skill_id: 5103301
+damage:
+  base: 0.09
+  impulse: 0.6
+  toughness: 0.6
+  flesh: 0.5
+  hurtable: 0.5
+toughness_type: 冲击
+enable_critical: true
+weekness_multiplier: 1.2
+fire_interval: 0.4
+magazine: 12
+total_ammo: 108
+accuracy: 59
+stability: 64
+reload_time: 2
+scope: 不可开镜
+attenuation_begin: 10
+attenuation_end: 20
+attenuation_scale: 0.3
+ignore_shield: false
+element_add_rate: 0
+skill_cooldown: 30
+pellets: 6
+---
+
+<WeaponSkill>
+  <ActiveSkill
+    name="滑铲时刻"
+    icon="/icons/weapons/skills/T_Icon_Skill_Snow_Talents_27400104.png"
+    duration={12}
+    cooldown={30}
+    count={1}
+  >
+    技能激活期间，每次触发滑铲补充满弹夹。触发滑铲后，接下来的<Yellow>10次</Yellow>射击，弹丸数量额外加<Yellow>3颗</Yellow>。
+  </ActiveSkill>
+
+  <PassiveSkill
+    name="强化射击"
+    tag="快速连发"
+    icon="/icons/weapons/skills/T_Weapon_Skill_20003000031_1.png"
+  >
+    触发滑铲后，接下来的<Yellow>10次</Yellow>射击，弹丸数量增加<Yellow>3颗</Yellow>。
+  </PassiveSkill>
+</WeaponSkill>
