@@ -15,6 +15,8 @@ description: "nzm-wiki 武器数据维护指南。用于修改 data/weapons/*.md
 - 近战武器通常不显示射速，保持 `fire_interval: null`，除非用户明确要求写入。
 - 批量更新前先 dry-run，输出将变化的武器数量、样例和缺失项。
 - 写回时只改相关 frontmatter 字段，避免重排整个 MDX。
+- `scripts/update-weapon.ts` 的默认模式是 `fill-missing`：已存在 MDX 只补缺失/空值，不覆盖已有人工填写值；需要覆盖脚本负责的字段时使用 `--overwrite`。
+- 指定武器中文名且 MDX 不存在时，`scripts/update-weapon.ts --write 武器名` 会创建 `data/weapons/{武器名}.mdx`，并复制武器图/技能图。
 - 保留用户已有的无关改动，不要回滚。
 
 ## 射速设计
@@ -60,6 +62,13 @@ refs/Exports/NZM/Content/DataTables/WeaponFeelParamTable.json
 
 该文件用于后坐力、换弹等手感参数；如果任务只涉及 `fire_interval` 或衰减，它不是必需文件。
 
+换弹时间规则：
+
+1. 先通过 `LuaDataTable/WeaponItemConfigTable.json` 的 `WeaponMODConfigID` 找到 `WeaponFeelParamTable.json` 中同 ID 的行。
+2. `WeaponChangeClipTimeBase` 是实际换弹动作时间，跑完后基本可以射击。
+3. `WeaponChangeClipEndToFireTime` 是换弹后的后摇/到可开火间隔。
+4. Wiki 的 `reload_time` 先和游戏内显示统一，写 `ceil(WeaponChangeClipTimeBase + WeaponChangeClipEndToFireTime)`。
+
 JSON 表常见结构是：
 
 ```ts
@@ -99,6 +108,8 @@ const rows = Array.isArray(data) ? data[0]?.Rows : data.Rows;
 
 - 批量更新前先 dry-run，输出将变化的武器数量、样例和缺失项。
 - 写回时只改相关 frontmatter 字段，避免重排整个 MDX。
+- `scripts/update-weapon.ts` 的默认模式是 `fill-missing`：已存在 MDX 只补缺失/空值，不覆盖已有人工填写值；需要覆盖脚本负责的字段时使用 `--overwrite`。
+- 指定武器中文名且 MDX 不存在时，`scripts/update-weapon.ts --write 武器名` 会创建 `data/weapons/{武器名}.mdx`，并复制武器图/技能图。
 - 保留用户已有的无关改动，不要回滚。
 - 写回后确认：
   - `data/weapons` 中没有 `file_rate`
