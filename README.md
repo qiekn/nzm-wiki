@@ -13,7 +13,7 @@
 - https://lostlightll.github.io/nzm-wiki/
 
 
-## 特性
+## 现有特性
 
 ### 搜索面板
 
