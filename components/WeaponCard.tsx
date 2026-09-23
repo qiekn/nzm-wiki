@@ -34,7 +34,7 @@ function formatDamage(
   base: number | undefined | null,
   pellets?: number,
 ): string {
-  if (base === null || base === undefined) return "-";
+  if (base === null || base === undefined || base < 0) return "-";
   const damage = formatSingleDecimal(base * 500);
   if (pellets && pellets > 1) {
     return `${damage} x ${pellets}`;
@@ -54,7 +54,7 @@ function formatFireRate(fireInterval?: number | string | null): string {
 function formatMeter(value: number | string | null | undefined): string {
   if (value === null || value === undefined || value === "") return "-";
   const numberValue = Number(value);
-  if (!Number.isFinite(numberValue)) return "-";
+  if (!Number.isFinite(numberValue) || numberValue < 0) return "-";
   return `${formatSingleDecimal(numberValue)}m`;
 }
 
@@ -232,7 +232,7 @@ function DetailedCard({ weapon }: { weapon: Weapon }) {
               </div>
               <div className="flex justify-between">
                 <span className="text-zinc-500">弱点倍率</span>
-                <span className="text-white">{weapon.weekness_multiplier}</span>
+                <span className="text-white">{formatValue(weapon.weekness_multiplier)}</span>
               </div>
             </>
           ) : (
@@ -259,7 +259,7 @@ function DetailedCard({ weapon }: { weapon: Weapon }) {
               </div>
               <div className="flex justify-between">
                 <span className="text-zinc-500">弱点倍率</span>
-                <span className="text-white">{weapon.weekness_multiplier}</span>
+                <span className="text-white">{formatValue(weapon.weekness_multiplier)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-zinc-500">破韧伤害</span>
@@ -417,7 +417,7 @@ export function WeaponDetailCard({ weapon }: { weapon: Weapon }) {
           </div>
           <div className="flex justify-between">
             <span className="text-zinc-500">弱点倍率</span>
-            <span className="text-white">{weapon.weekness_multiplier}</span>
+            <span className="text-white">{formatValue(weapon.weekness_multiplier)}</span>
           </div>
         </div>
       </div>
@@ -518,7 +518,7 @@ export function WeaponDetailCard({ weapon }: { weapon: Weapon }) {
         <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3">
           <div className="flex justify-between">
             <span className="text-zinc-500">破韧类型</span>
-            <span className="text-white">{weapon.toughness_type}</span>
+            <span className="text-white">{formatValue(weapon.toughness_type)}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-zinc-500">可以暴击</span>
