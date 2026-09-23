@@ -1,0 +1,60 @@
+---
+title: 层流冷焰
+use_type: 主武器
+weapon_type: 射手步枪
+element: 寒冷
+rarity: 传说
+tags:
+  - 双模式
+scope: 高倍镜
+keywords:
+  - 冷焰飞弹
+  - 低温预混
+damage:
+  base: 0.54
+  impulse: 6.5
+  toughness: 6.5
+  flesh: 5.2
+  hurtable: 5.2
+toughness_type: 冲击
+enable_critical: true
+weekness_multiplier: 1.5
+fire_interval: 0.25
+magazine: 12
+total_ammo: 120
+accuracy: 88
+stability: 40
+reload_time: -1
+range: ''
+explosion_range: ''
+attenuation_begin: 70
+attenuation_end: 100
+attenuation_scale: 0.6
+ignore_shield: false
+element_add_rate: 0.276
+skill_cooldown: 35
+pellets: null
+weapon_type_id: 14
+prototype_id: '20014000001'
+asc_type_id: 78
+active_skill_id: 5101401
+---
+
+<WeaponSkill>
+  <ActiveSkill
+    name="冷焰飞弹"
+    icon="/icons/weapons/skills/T_Weapon_Skill_20014000001-2.png"
+    cooldown={35}
+    count={1}
+  >
+    释放时召唤<Yellow>4枚</Yellow>追踪飞弹。接下来的<Yellow>8秒</Yellow>内，射击命中敌人可继续积累飞弹，积满后自动发射。
+  </ActiveSkill>
+
+  <PassiveSkill
+    name="低温预混"
+    tag="双模式"
+    icon="/icons/weapons/skills/T_Weapon_Skill_20014000001-1.png"
+  >
+    射击命中敌人可积累层数，换弹后进入追踪子弹模式。追踪子弹命中后产生小范围爆炸，并消耗积累的层数；层数耗尽后恢复普通射击。
+  </PassiveSkill>
+</WeaponSkill>

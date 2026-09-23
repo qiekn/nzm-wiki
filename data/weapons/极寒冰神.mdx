@@ -1,0 +1,62 @@
+---
+title: 极寒冰神
+use_type: 主武器
+weapon_type: 连发榴弹
+element: 寒冷
+rarity: 传说
+tags:
+  - 双模式
+scope: 不可开镜
+keywords:
+  - 冰神
+  - 冰凌弹
+  - 极寒射线
+  - 寒冰真气
+damage:
+  base: 0.3
+  impulse: 3.4
+  toughness: 3.4
+  flesh: 6.8
+  hurtable: 2.04
+toughness_type: 冲击
+enable_critical: true
+weekness_multiplier: 2
+fire_interval: 0.6
+magazine: 30
+total_ammo: 150
+accuracy: 59
+stability: 64
+reload_time: 1.8
+range: ''
+explosion_range: -1
+attenuation_begin: 0
+attenuation_end: 0
+attenuation_scale: 1
+ignore_shield: false
+element_add_rate: 0.1815
+skill_cooldown: 30
+pellets: null
+weapon_type_id: 16
+prototype_id: '20003000017'
+asc_type_id: 385
+active_skill_id: 5103401
+---
+
+<WeaponSkill>
+  <ActiveSkill
+    name="寒冰真气"
+    icon="/icons/weapons/skills/T_Weapon_Skill_20003000017-2.png"
+    cooldown={30}
+    count={1}
+  >
+    释放向外扩散的冰雾，对半径<Yellow>16米</Yellow>内的敌人造成寒冷伤害，并施加减速效果。
+  </ActiveSkill>
+
+  <PassiveSkill
+    name="极寒一击"
+    tag="双模式"
+    icon="/icons/weapons/skills/T_Weapon_Skill_20003000017-1.png"
+  >
+    可在冰凌弹和极寒射线之间切换。冰凌弹命中后造成寒冷范围伤害，极寒射线用于持续攻击单体目标。
+  </PassiveSkill>
+</WeaponSkill>
