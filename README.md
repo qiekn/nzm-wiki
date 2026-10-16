@@ -12,4 +12,4 @@
 
 当前项目少有维护，可以移步其他玩家的 Fork
 
-- https://lostlightll.github.io/nzm-wiki/
+- https://endlessfantasia.github.io/nzm-wiki/

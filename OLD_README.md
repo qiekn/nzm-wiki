@@ -10,7 +10,7 @@
 
 其他玩家的 Fork
 
-- https://lostlightll.github.io/nzm-wiki/
+- https://endlessfantasia.github.io/nzm-wiki/
 
 
 ## 特性
